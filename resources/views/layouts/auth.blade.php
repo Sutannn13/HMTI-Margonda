@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="id" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@yield('title', 'Login') - HMTI Margo Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    @vite(['resources/css/app.css'])
+</head>
+<body class="h-full bg-hmti-blue-dark">
+    <div class="min-h-full flex">
+        {{-- Left: Branding Panel --}}
+        <div class="hidden lg:flex lg:w-1/2 flex-col justify-center items-center p-12 relative overflow-hidden">
+            <div class="absolute inset-0">
+                <img src="{{ asset('images/hmti1.jpeg') }}" alt="HMTI" class="w-full h-full object-cover">
+                <div class="absolute inset-0 bg-gradient-to-br from-hmti-blue-dark/90 via-hmti-blue/80 to-hmti-blue-dark/90"></div>
+            </div>
+            <div class="relative z-10 text-center">
+                <div class="flex items-center justify-center gap-6 mb-8">
+                    <img src="{{ asset('images/logo ubsi.png') }}" alt="UBSI" class="h-20 w-auto object-contain opacity-90">
+                    <div class="w-px h-16 bg-white/30"></div>
+                    <img src="{{ asset('images/logo hmti.jpg') }}" alt="HMTI" class="h-20 w-auto rounded-xl object-contain opacity-90">
+                </div>
+                <h1 class="text-4xl font-extrabold text-white mb-3">HMTI Margonda</h1>
+                <p class="text-hmti-yellow font-semibold text-lg mb-2">Himpunan Mahasiswa Teknologi Informasi</p>
+                <p class="text-gray-300 text-sm">Universitas Bina Sarana Informatika · Margonda</p>
+            </div>
+            <div class="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-hmti-yellow via-hmti-red to-hmti-yellow"></div>
+        </div>
+
+        {{-- Right: Form --}}
+        <div class="w-full lg:w-1/2 flex items-center justify-center p-8">
+            <div class="w-full max-w-md">
+                @yield('form')
+            </div>
+        </div>
+    </div>
+</body>
+</html>
