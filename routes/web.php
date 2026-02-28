@@ -2,9 +2,11 @@
 
 use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CollaborationController;
 use App\Http\Controllers\GuestController;
 use App\Http\Controllers\KasController;
 use App\Http\Controllers\OrganizationController;
+use App\Models\CollaborationRequest;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,6 +17,32 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [GuestController::class, 'home'])->name('home');
 Route::get('/struktur-organisasi', [GuestController::class, 'structure'])->name('guest.structure');
 Route::post('/kolaborasi', [GuestController::class, 'collab'])->name('guest.collab');
+
+// API: check collaboration status by email
+Route::get('/api/collab-status', function (\Illuminate\Http\Request $request) {
+    $email = $request->query('email');
+    if (!$email) {
+        return response()->json(['found' => false]);
+    }
+    $collab = CollaborationRequest::where('email', $email)->latest()->first();
+    if (!$collab) {
+        return response()->json(['found' => false]);
+    }
+    $statusLabels = [
+        'pending' => 'Menunggu ditinjau oleh tim HMTI',
+        'reviewing' => 'Sedang ditinjau oleh pengurus HMTI',
+        'approved' => 'Pengajuan disetujui! Tim akan menghubungi Anda.',
+        'rejected' => 'Pengajuan tidak dapat diproses saat ini.',
+    ];
+    return response()->json([
+        'found' => true,
+        'status' => $collab->status,
+        'status_label' => $statusLabels[$collab->status] ?? $collab->status,
+        'type' => $collab->proposalLabel(),
+        'admin_notes' => $collab->admin_notes,
+        'submitted_at' => $collab->created_at->format('d M Y, H:i'),
+    ]);
+})->name('api.collab-status');
 
 /*
 |--------------------------------------------------------------------------
@@ -52,4 +80,9 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::put('/kas/{payment}/notes', [KasController::class, 'updateNotes'])->name('kas.update-notes');
     Route::post('/kas/disposition', [KasController::class, 'updateDisposition'])->name('kas.disposition');
     Route::get('/kas/report', [KasController::class, 'report'])->name('kas.report');
+
+    // Collaboration Management
+    Route::get('/collaboration', [CollaborationController::class, 'index'])->name('collaboration.index');
+    Route::put('/collaboration/{collaboration}', [CollaborationController::class, 'update'])->name('collaboration.update');
+    Route::delete('/collaboration/{collaboration}', [CollaborationController::class, 'destroy'])->name('collaboration.destroy');
 });
